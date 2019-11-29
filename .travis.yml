@@ -1,5 +1,10 @@
 language: go
 go: 1.12.x
+
+install:
+  - go get golang.org/x/lint/golint
+
 script:
   - go build hw_1/main.go
+  - go vet hw_1/main.go
   - golint hw_1/main.go
