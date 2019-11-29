@@ -2,3 +2,4 @@ language: go
 go: 1.12.x
 script:
   - go build hw_1/main.go
+  - golint hw_1/main.go
