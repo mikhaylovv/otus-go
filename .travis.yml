@@ -14,7 +14,7 @@ jobs:
         env: DIR=hw_1
 
 script:
-  - go build $DIR/*
-  - go vet $DIR/*
-  - golint $DIR/*
+  - go build $DIR/*.go
+  - go vet $DIR/*.go
+  - golint $DIR/*.go
   - go test $DIR
