@@ -4,8 +4,17 @@ go: 1.12.x
 install:
   - go get github.com/beevik/ntp
   - go get golang.org/x/lint/golint
+  - go get github.com/stretchr/testify
+
+jobs:
+  include:
+      - name: "hw_1"
+        env: DIR=hw_1
+      - name: "hw_2"
+        env: DIR=hw_1
 
 script:
-  - go build hw_1/main.go
-  - go vet hw_1/main.go
-  - golint hw_1/main.go
+  - go build $DIR/*
+  - go vet $DIR/*
+  - golint $DIR/*
+  - go test $DIR
