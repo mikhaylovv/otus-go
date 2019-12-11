@@ -37,12 +37,17 @@ func UnpackString(str string) (string, error) {
 
 	builder.WriteRune(prevLetter)
 
+	specialSymbol := false
+	if prevLetter == '\\' {
+		specialSymbol = true
+	}
+
 	for i, r := range str {
 		if i == 0 {
 			continue
 		}
 
-		if unicode.IsDigit(r) {
+		if unicode.IsDigit(r) && !specialSymbol {
 			for i := 0; i < int(r-'0')-1; i++ {
 				builder.WriteRune(prevLetter)
 			}
@@ -50,7 +55,17 @@ func UnpackString(str string) (string, error) {
 		}
 
 		prevLetter = r
-		builder.WriteString(string(prevLetter))
+		if specialSymbol {
+			builder.WriteRune(prevLetter)
+			specialSymbol = false
+		} else {
+			if prevLetter == '\\' {
+				specialSymbol = true
+			} else {
+				builder.WriteRune(prevLetter)
+			}
+		}
+
 	}
 
 	return builder.String(), nil

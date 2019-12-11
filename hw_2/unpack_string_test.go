@@ -28,10 +28,10 @@ func TestUnpackStringSimpleNegative(t *testing.T) {
 	as.NotNil(er)
 }
 
-//func TestUnpackStringSimpleAdvanced(t *testing.T) {
-//	as := assert.New(t)
-//
-//	testFunc(as, `qwe\4\5`, "qwe45")
-//	testFunc(as, `qwe\45`, "qwe44444")
-//	testFunc(as, `qwe\\5`, `qwe\\\\\`)
-//}
+func TestUnpackStringSimpleAdvanced(t *testing.T) {
+	as := assert.New(t)
+
+	testFunc(as, `qwe\4\5`, "qwe45")
+	testFunc(as, `qwe\45`, "qwe44444")
+	testFunc(as, `qwe\\5`, `qwe\\\\\`)
+}
