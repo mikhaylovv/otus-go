@@ -16,6 +16,6 @@ jobs:
 script:
   - go build $DIR/*.go
   - go vet $DIR/*.go
-  - golint $DIR/*.go
+  - golint -set_exit_status $DIR/*.go
   - cd $DIR
   - go test
