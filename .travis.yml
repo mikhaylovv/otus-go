@@ -17,4 +17,5 @@ script:
   - go build $DIR/*.go
   - go vet $DIR/*.go
   - golint $DIR/*.go
-  - go test $DIR
+  - cd $DIR
+  - go test
