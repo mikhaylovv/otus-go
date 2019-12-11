@@ -35,11 +35,12 @@ func UnpackString(str string) (string, error) {
 		return "", errors.New("first letter is digit")
 	}
 
-	builder.WriteRune(prevLetter)
 
 	specialSymbol := false
 	if prevLetter == '\\' {
 		specialSymbol = true
+	} else {
+		builder.WriteRune(prevLetter)
 	}
 
 	for i, r := range str {

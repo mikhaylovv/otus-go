@@ -34,4 +34,5 @@ func TestUnpackStringSimpleAdvanced(t *testing.T) {
 	testFunc(as, `qwe\4\5`, "qwe45")
 	testFunc(as, `qwe\45`, "qwe44444")
 	testFunc(as, `qwe\\5`, `qwe\\\\\`)
+	testFunc(as, `\5qwe\\5`, `5qwe\\\\\`)
 }
