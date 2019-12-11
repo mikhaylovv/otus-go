@@ -1,4 +1,4 @@
-package hw_2
+package hw2
 
 import (
 	"errors"
@@ -7,6 +7,18 @@ import (
 	"unicode/utf8"
 )
 
+/*UnpackString ...
+	Создать Go функцию, осуществляющую примитивную распаковку строки, содержащую повторяющиеся символы / руны, например:
+
+	* "a4bc2d5e" => "aaaabccddddde"
+	* "abcd" => "abcd"
+	* "45" => "" (некорректная строка)
+
+	Дополнительное задание: поддержка escape - последовательности
+	* `qwe\4\5` => `qwe45` (*)
+	* `qwe\45` => `qwe44444` (*)
+	* `qwe\\5` => `qwe\\\\\` (*)
+ */
 func UnpackString(str string) (string, error) {
 
 	var builder strings.Builder
@@ -15,9 +27,8 @@ func UnpackString(str string) (string, error) {
 	if prevLetter == utf8.RuneError {
 		if size == 0 {
 			return "", errors.New("empty string passed")
-		} else {
-			return "", errors.New("encoding is invalid")
 		}
+		return "", errors.New("encoding is invalid")
 	}
 
 	if unicode.IsDigit(prevLetter) {

@@ -1,4 +1,4 @@
-package hw_2
+package hw2
 
 import (
 	"testing"
