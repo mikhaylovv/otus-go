@@ -35,7 +35,6 @@ func UnpackString(str string) (string, error) {
 		return "", errors.New("first letter is digit")
 	}
 
-
 	specialSymbol := false
 	if prevLetter == '\\' {
 		specialSymbol = true
@@ -66,7 +65,6 @@ func UnpackString(str string) (string, error) {
 				builder.WriteRune(prevLetter)
 			}
 		}
-
 	}
 
 	return builder.String(), nil

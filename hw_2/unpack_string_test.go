@@ -19,7 +19,6 @@ func TestUnpackStringSimplePositive(t *testing.T) {
 	testFunc(as, "a4bc2d5e", "aaaabccddddde")
 }
 
-
 func TestUnpackStringSimpleNegative(t *testing.T) {
 	as := assert.New(t)
 
