@@ -1,9 +1,33 @@
 package hw3
 
 import (
+	"sort"
 	"strings"
 	"unicode"
 )
+
+//getTopFreqWord - gets the most frequent word in dictionary in lexicographical order
+func getTopFreqWord (words map[string]int) string {
+	word := ""
+	it := 0
+	for w, freq := range words {
+		if freq > it {
+			it = freq
+			word = w
+		}
+	}
+
+	top := []string{word}
+	for word, freq := range words {
+		if freq == it {
+			top = append(top, word)
+		}
+	}
+
+	sort.SliceStable(top, func (i, j int) bool { return top[i] < top[j] })
+
+	return top[0]
+}
 
 /*Top10 - Частотный анализ
 Написать функцию, которая получает на вход текст и возвращает
@@ -20,17 +44,8 @@ func Top10(text string) [10]string {
 
 	var freq [10]string
 	for i := 0; i < 10; i++ {
-		topFreqWord := ""
-		topFreq := 0
-		for word, freq := range wordsMap {
-			if freq > topFreq {
-				topFreq = freq
-				topFreqWord = word
-			}
-		}
-
+		topFreqWord := getTopFreqWord(wordsMap)
 		delete(wordsMap, topFreqWord)
-
 		freq[i] = topFreqWord
 	}
 
