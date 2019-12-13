@@ -7,7 +7,7 @@ import (
 )
 
 //getTopFreqWord - gets the most frequent word in dictionary in lexicographical order
-func getTopFreqWord (words map[string]int) string {
+func getTopFreqWord(words map[string]int) string {
 	word := ""
 	it := 0
 	for w, freq := range words {
@@ -24,7 +24,7 @@ func getTopFreqWord (words map[string]int) string {
 		}
 	}
 
-	sort.SliceStable(top, func (i, j int) bool { return top[i] < top[j] })
+	sort.SliceStable(top, func(i, j int) bool { return top[i] < top[j] })
 
 	return top[0]
 }
