@@ -5,20 +5,6 @@ import (
 	"unicode"
 )
 
-//getTopFreqWord - gets the most frequent word in dictionary
-func getTopFreqWord(words map[string]int) string {
-	word := ""
-	it := 0
-	for w, freq := range words {
-		if freq > it {
-			it = freq
-			word = w
-		}
-	}
-
-	return word
-}
-
 /*Top10 - Частотный анализ
 Написать функцию, которая получает на вход текст и возвращает
 10 самых часто встречающихся слов без учета словоформ
@@ -32,12 +18,21 @@ func Top10(text string) []string {
 		wordsMap[strings.ToLower(word)]++
 	}
 
-	freq := []string{}
+	res := []string{}
 	for i := 0; i < 10 && len(wordsMap) > 0; i++ {
-		topFreqWord := getTopFreqWord(wordsMap)
+		// get top frequent word
+		topFreqWord := ""
+		it := 0
+		for w, freq := range wordsMap {
+			if freq > it {
+				it = freq
+				topFreqWord = w
+			}
+		}
+
 		delete(wordsMap, topFreqWord)
-		freq = append(freq, topFreqWord)
+		res = append(res, topFreqWord)
 	}
 
-	return freq
+	return res
 }
