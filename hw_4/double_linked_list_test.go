@@ -100,7 +100,7 @@ func TestListSimpleFirst(t *testing.T) {
 func TestListSimpleLast(t *testing.T) {
 	as, list := setUpListTest(t)
 
-	as.EqualValues(10, list.Last().value)
+	as.EqualValues(9, list.Last().value)
 }
 
 func TestListSimplePushFront(t *testing.T) {
@@ -115,7 +115,7 @@ func TestListSimplePushBack(t *testing.T) {
 	as, list := setUpListTest(t)
 
 	list.PushBack(30)
-	as.EqualValues(20, list.Last().value)
+	as.EqualValues(30, list.Last().value)
 	as.EqualValues(11, list.Len())
 }
 
