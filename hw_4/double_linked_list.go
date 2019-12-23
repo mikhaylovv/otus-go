@@ -12,11 +12,11 @@ type Item struct {
 type List struct {
 	head *Item
 	tail *Item
-	size int
+	size uint
 }
 
 // Len - returns the length of list. O(1).
-func (l List) Len() int {
+func (l List) Len() uint {
 	return l.size
 }
 
