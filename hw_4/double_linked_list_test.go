@@ -130,7 +130,7 @@ func TestListRemoveSimle(t *testing.T) {
 	as.EqualValues(8, list.Last().value)
 	as.EqualValues(8, list.Len())
 
-	list.Remove(*list.First().Next())
+	list.Remove(list.First().Next())
 	as.EqualValues(7, list.Len())
 	as.EqualValues(1, list.First().value)
 	as.EqualValues(8, list.Last().value)

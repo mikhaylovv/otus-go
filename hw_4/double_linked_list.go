@@ -1,55 +1,54 @@
 package doublelinkedlist
 
-//Item for double linked list, can contains any element
+// Item for double linked list, can contains any element.
 type Item struct {
 	value interface{}
 	prev  *Item
 	next  *Item
 }
 
-//List - Double linked list structure
-//With fast access to first and last elements.
+// List - Double linked list structure.
+// With fast access to first and last elements.
 type List struct {
 	head *Item
 	tail *Item
-	size int // ?? uint
+	size int
 }
 
-//Len - returns the length of list. O(1)
+// Len - returns the length of list. O(1).
 func (l List) Len() int {
 	return l.size
 }
 
-//First - returns the first element of the list if it exist.
-//Otherwise return empty Item. O(1)
-func (l List) First() Item {
+// First - returns the first element of the list if it exist.
+// Otherwise return empty Item. O(1)
+func (l List) First() *Item {
 	if l.head != nil {
-		return *l.head
+		return l.head
 	}
 
-	return Item{}
+	return &Item{}
 }
 
-//Last - returns the last element of the list if it exist.
-//Otherwise return empty Item. O(1)
-func (l List) Last() Item {
+// Last - returns the last element of the list if it exist.
+// Otherwise return empty Item. O(1)
+func (l List) Last() *Item {
 	if l.tail != nil {
-		return *l.tail
+		return l.tail
 	}
 
-	return Item{}
+	return &Item{}
 }
 
-//PushFront - pushes element to the front of the double linked list, if list exist. O(1)
+// PushFront - pushes element to the front of the double linked list, if list exist. O(1).
 func (l *List) PushFront(v interface{}) {
 	if l == nil {
 		return
 	}
 
-	el := Item {
+	el := Item{
 		value: v,
-		prev: nil,
-		next: l.head,
+		next:  l.head,
 	}
 
 	if l.head != nil {
@@ -65,34 +64,47 @@ func (l *List) PushFront(v interface{}) {
 	l.size++
 }
 
-//PushBack - pushes element to the end of the double linked list, if list exist. O(1)
+// PushBack - pushes element to the end of the double linked list, if list exist. O(1).
 func (l *List) PushBack(v interface{}) {
 	if l == nil {
 		return
 	}
 
-	el := Item {
+	el := &Item{
 		value: v,
-		prev: l.tail,
-		next: nil,
+		prev:  l.tail,
 	}
 
 	if l.tail != nil {
-		l.tail.next = &el
+		l.tail.next = el
 	}
 
-	l.tail = &el
+	l.tail = el
 
 	if l.head == nil {
-		l.head = &el
+		l.head = el
 	}
 
 	l.size++
 }
 
-//Remove - removes element from list.
-//This method implemented on trust, if you put as argument element from different list, it may corrupt your objects.
-func (l *List) Remove(i Item) {
+// contains - check if element in list. O(n)
+func (l *List) contains(i *Item) bool {
+	for n := l.head; n != nil; n = n.next {
+		if i == n {
+			return true
+		}
+	}
+
+	return false
+}
+
+// Remove - removes element from list.
+func (l *List) Remove(i *Item) {
+	if !l.contains(i) {
+		return
+	}
+
 	if l == nil {
 		return
 	}
@@ -119,17 +131,17 @@ func (l *List) Remove(i Item) {
 	i.Next().prev = i.Prev()
 }
 
-//Value - returns the copy of Item object.
+// Value - returns the copy of Item object.
 func (i Item) Value() interface{} {
 	return i.value
 }
 
-//Next - returns the copy of next obj pointer
+// Next - returns the copy of next obj pointer
 func (i Item) Next() *Item {
 	return i.next
 }
 
-//Prev - returns the copy of prev obj pointer
+// Prev - returns the copy of prev obj pointer
 func (i Item) Prev() *Item {
 	return i.prev
 }
