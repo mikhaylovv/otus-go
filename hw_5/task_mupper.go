@@ -13,7 +13,7 @@ func Run(tasks []func() error, workersNum uint, maxErrorsCount uint) error {
 
 	wg := &sync.WaitGroup{}
 	errChan := make(chan error, workersNum)
-	taskChan := make(chan func() error, len(tasks))
+	taskChan := make(chan func() error, workersNum)
 	resChan := make(chan struct{}, workersNum)
 
 	wg.Add(int(workersNum))
@@ -21,42 +21,36 @@ func Run(tasks []func() error, workersNum uint, maxErrorsCount uint) error {
 		go work(taskChan, errChan, resChan, wg)
 	}
 
-	for _, f := range tasks {
-		taskChan <- f
-	}
-
-	var errsCounter uint = 0
-	var tasksCounter uint = 0
-
 	defer func() {
 		close(taskChan)
-
-		for len(resChan) != 0 {
-			<- resChan
-		}
-		for len(errChan) != 0 {
-			<- errChan
-		}
-
 		wg.Wait()
 	}()
 
-	for {
-		select {
-		case <-errChan:
-			errsCounter++
-			if errsCounter > maxErrorsCount {
-				return errors.New("errors count exceed")
+	var errsCounter uint = 0
+
+	numTasks := uint(len(tasks))
+	for i := uint(0); i < numTasks; i += workersNum {
+		step := i + workersNum
+		for j := i; j < step && j < numTasks; j++ {
+			taskChan <- tasks[j]
+		}
+
+		for j := i; j < step && j < numTasks; j++ {
+
+			select {
+			case <-errChan:
+				errsCounter++
+				if errsCounter > maxErrorsCount {
+					return errors.New("errors count exceed")
+				}
+
+			case <-resChan:
 			}
-
-		case <-resChan:
-			tasksCounter++
 		}
 
-		if (errsCounter + tasksCounter) == uint(len(tasks)) {
-			return nil
-		}
 	}
+
+	return nil
 }
 
 func work(
