@@ -64,5 +64,5 @@ func TestRunSeveralErrorsNegative(t *testing.T) {
 	fns := createTasks(func()error { res <- struct{}{}; return errors.New("shit") }, 6)
 	fns = append(fns, createTasks(func()error { res <- struct{}{}; return nil }, 20)...)
 	as.NotNil(Run(fns, 10, 5))
-	as.LessOrEqual(len(res), 15)
+	as.Less(len(res), 15)
 }
