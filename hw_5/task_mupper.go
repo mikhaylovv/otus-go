@@ -5,6 +5,12 @@ import (
 	"sync"
 )
 
+// Run - function for parallel execution of func() error tasks
+// Параллельное исполнение
+// Цель: Написать функцию для параллельного выполнения N заданий (т.е. в N параллельных горутинах).
+// Функция должна останавливать свою работу если произошло M ошибок Сигнатура функции:
+// Run(task []func()error, N int, M int) error Учесть что задания могут выполняться разное время
+// Длинна списка задач L = len(tasks) может быть больше или меньше N.
 func Run(tasks []func() error, workersNum uint, maxErrorsCount uint) error {
 
 	if workersNum == 0 {
