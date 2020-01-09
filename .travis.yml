@@ -16,8 +16,8 @@ jobs:
         env: DIR=hw_3
       - name: "hw_4"
         env: DIR=hw_4
-       - name: "hw_5"
-       env: DIR=hw_5
+      - name: "hw_5"
+        env: DIR=hw_5
 
 script:
   - go build $DIR/*.go
