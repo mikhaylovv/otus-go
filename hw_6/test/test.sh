@@ -5,6 +5,7 @@ diff test.out expected.out
 if [ $? -ne 0 ]
 then
   echo "test failed, files not equal"
+  cat test.out
   exit 1
 fi
 
