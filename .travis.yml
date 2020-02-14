@@ -5,6 +5,7 @@ install:
   - go get github.com/beevik/ntp
   - go get golang.org/x/lint/golint
   - go get github.com/stretchr/testify
+  - go get github.com/cheggaaa/pb/v3
 
 jobs:
   include:
@@ -18,6 +19,8 @@ jobs:
         env: DIR=hw_4
       - name: "hw_5"
         env: DIR=hw_5
+      - name: "hw_6"
+        env: DIR=hw_6
 
 script:
   - go build $DIR/*.go
