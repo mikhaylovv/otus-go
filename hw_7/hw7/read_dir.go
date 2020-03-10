@@ -1,10 +1,8 @@
 package hw7
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
-	"os/exec"
 )
 
 // ReadDir - сканирует указанный каталог и возвращает все переменные окружения, определенные в нем.
@@ -36,23 +34,4 @@ func ReadDir(dir string) (map[string]string, error) {
 	}
 
 	return res, nil
-}
-
-// RunCmd - запускает программу с аргументами (cmd) c переопределнным окружением.
-func RunCmd(cmd []string, env map[string]string) error {
-	for key, val := range env {
-		err := os.Setenv(key, val)
-		if err != nil {
-			os.Stderr.WriteString(err.Error())
-		}
-	}
-
-	c := exec.Command(cmd[0], cmd[1:]...)
-	envSlice := os.Environ()
-	for key, val := range env {
-		envSlice = append(envSlice, fmt.Sprintf("%s=%s", key, val))
-	}
-	c.Env = envSlice
-	c.Stdout = os.Stdout
-	return c.Run()
 }
