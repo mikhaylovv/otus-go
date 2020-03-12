@@ -25,8 +25,9 @@ func (s *InMemoryStorage) removeEvent(i int) {
 	s.events = s.events[:lastIdx-1]
 }
 
+// AddEvent - add new event in Storage or error EventAlreadyExistError
 func (s *InMemoryStorage) AddEvent(e storage.Event) error {
-	if _,  err := s.findEventIndex(e); err != storage.EventNotFoundError {
+	if _, err := s.findEventIndex(e); err != storage.EventNotFoundError {
 		return storage.EventAlreadyExistError
 	}
 
@@ -34,6 +35,7 @@ func (s *InMemoryStorage) AddEvent(e storage.Event) error {
 	return nil
 }
 
+// Delete Event - delete existing event from storage or error EventNotFoundError
 func (s *InMemoryStorage) DeleteEvent(e storage.Event) error {
 	idx, err := s.findEventIndex(e)
 	if err != nil {
@@ -44,6 +46,7 @@ func (s *InMemoryStorage) DeleteEvent(e storage.Event) error {
 	return nil
 }
 
+// ChangeEvent - changes existing event or error EventNotFoundError
 func (s *InMemoryStorage) ChangeEvent(old storage.Event, new storage.Event) error {
 	idx, err := s.findEventIndex(old)
 	if err != nil {
@@ -54,6 +57,7 @@ func (s *InMemoryStorage) ChangeEvent(old storage.Event, new storage.Event) erro
 	return nil
 }
 
+// GetEvents - gets events from date to date, error always nil
 func (s *InMemoryStorage) GetEvents(from time.Time, to time.Time) ([]storage.Event, error) {
 	var res []storage.Event
 	for _, ev := range s.events {

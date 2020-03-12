@@ -2,7 +2,6 @@ package storage
 
 import "time"
 
-
 type Event struct {
 	Date        time.Time
 	Title       string
