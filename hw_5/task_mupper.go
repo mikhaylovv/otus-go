@@ -32,7 +32,7 @@ func Run(tasks []func() error, workersNum uint, maxErrorsCount uint) error {
 		wg.Wait()
 	}()
 
-	var errsCounter uint = 0
+	var errsCounter uint
 
 	numTasks := uint(len(tasks))
 	for i := uint(0); i < numTasks; i += workersNum {
