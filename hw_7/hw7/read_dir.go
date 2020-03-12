@@ -1,8 +1,10 @@
 package hw7
 
 import (
-	"io/ioutil"
+	"bufio"
+	"errors"
 	"os"
+	"path"
 )
 
 // ReadDir - сканирует указанный каталог и возвращает все переменные окружения, определенные в нем.
@@ -20,15 +22,25 @@ func ReadDir(dir string) (map[string]string, error) {
 	res := make(map[string]string, len(files))
 
 	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+
 		envName := file.Name()
-		f, err := os.Open(dir + "/" + envName)
+		f, err := os.Open(path.Join(dir, envName))
 		if err != nil {
 			continue
 		}
 
-		envVal, err := ioutil.ReadAll(f)
+		br := bufio.NewReader(f)
+
+		envVal, isPrefix, err := br.ReadLine()
 		if err != nil {
 			continue
+		}
+
+		if isPrefix {
+			return nil, errors.New("variable is too long for reading")
 		}
 		res[envName] = string(envVal)
 	}
