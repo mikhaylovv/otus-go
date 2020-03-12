@@ -1,7 +1,7 @@
 package inmemorystorage
 
 import (
-	"github.com/mikhaylovv/otus-go/hw_8/celendar/storage"
+	"github.com/mikhaylovv/otus-go/hw_8/calendar/storage"
 	"time"
 )
 
