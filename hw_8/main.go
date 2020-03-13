@@ -70,11 +70,11 @@ func main() {
 	}
 	_, _ = c.Storage.GetEvents(time.Now(), time.Now())
 
-	srv := httpserver.HttpServer{
+	srv := httpserver.HTTPServer{
 		Logger: lg,
 	}
 
-	err = srv.StartListen(cfg.HttpListen)
+	err = srv.StartListen(cfg.HTTPLiten)
 	if err != nil {
 		log.Fatal("can't start http server", err)
 	}

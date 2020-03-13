@@ -5,7 +5,8 @@ import (
 	"go.uber.org/zap"
 )
 
-type HttpServer struct {
+// HTTPServer - simple realization of http server, using fasthttp
+type HTTPServer struct {
 	Logger *zap.Logger
 }
 
@@ -23,7 +24,8 @@ func handle(ctx *fasthttp.RequestCtx, lg *zap.Logger) {
 	}
 }
 
-func (h *HttpServer) StartListen(addr string) error {
+// StartListen - starts listen http requests in current goroutine
+func (h *HTTPServer) StartListen(addr string) error {
 	return fasthttp.ListenAndServe(
 		addr,
 		func(ctx *fasthttp.RequestCtx) {
