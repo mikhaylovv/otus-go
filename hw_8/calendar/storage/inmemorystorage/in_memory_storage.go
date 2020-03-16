@@ -36,8 +36,8 @@ func (s *InMemoryStorage) DeleteEvent(id uint) error {
 }
 
 // ChangeEvent - changes existing event
-func (s *InMemoryStorage) ChangeEvent(oldId uint, new storage.Event) error {
-	s.events[oldId] = new
+func (s *InMemoryStorage) ChangeEvent(oldID uint, new storage.Event) error {
+	s.events[oldID] = new
 	return nil
 }
 

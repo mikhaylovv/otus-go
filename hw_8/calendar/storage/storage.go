@@ -13,6 +13,6 @@ type Event struct {
 type Storage interface {
 	AddEvent(e Event) (uint, error)
 	DeleteEvent(id uint) error
-	ChangeEvent(oldId uint, new Event) error
+	ChangeEvent(oldID uint, new Event) error
 	GetEvents(from time.Time, to time.Time) ([]Event, error)
 }
