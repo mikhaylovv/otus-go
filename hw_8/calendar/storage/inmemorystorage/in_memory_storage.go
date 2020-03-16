@@ -7,54 +7,37 @@ import (
 
 // InMemoryStorage - in memory storage for Calendar Events
 type InMemoryStorage struct {
-	events []storage.Event
+	events map[uint]storage.Event
+	last uint
 }
 
-func (s *InMemoryStorage) findEventIndex(event storage.Event) (int, error) {
+func (s *InMemoryStorage) findEventIndex(event storage.Event) (uint, error) {
 	for idx, ev := range s.events {
 		if ev == event {
 			return idx, nil
 		}
 	}
 
-	return -1, storage.ErrEventNotFound
-}
-
-func (s *InMemoryStorage) removeEvent(i int) {
-	lastIdx := len(s.events)
-	s.events[lastIdx-1], s.events[i] = s.events[i], s.events[lastIdx-1]
-	s.events = s.events[:lastIdx-1]
+	return 0, storage.ErrEventNotFound
 }
 
 // AddEvent - add new event in Storage or error ErrEventAlreadyExist
-func (s *InMemoryStorage) AddEvent(e storage.Event) error {
-	if _, err := s.findEventIndex(e); err != storage.ErrEventNotFound {
-		return storage.ErrEventAlreadyExist
-	}
+func (s *InMemoryStorage) AddEvent(e storage.Event) (uint, error) {
+	idx := s.last
+	s.events[idx] = e
+	s.last++
+	return idx, nil
+}
 
-	s.events = append(s.events, e)
+// DeleteEvent - delete existing event from storage
+func (s *InMemoryStorage) DeleteEvent(id uint) error {
+	delete(s.events, id)
 	return nil
 }
 
-// DeleteEvent - delete existing event from storage or error ErrEventNotFound
-func (s *InMemoryStorage) DeleteEvent(e storage.Event) error {
-	idx, err := s.findEventIndex(e)
-	if err != nil {
-		return err
-	}
-
-	s.removeEvent(idx)
-	return nil
-}
-
-// ChangeEvent - changes existing event or error ErrEventNotFound
-func (s *InMemoryStorage) ChangeEvent(old storage.Event, new storage.Event) error {
-	idx, err := s.findEventIndex(old)
-	if err != nil {
-		return err
-	}
-
-	s.events[idx] = new
+// ChangeEvent - changes existing event
+func (s *InMemoryStorage) ChangeEvent(oldId uint, new storage.Event) error {
+	s.events[oldId] = new
 	return nil
 }
 

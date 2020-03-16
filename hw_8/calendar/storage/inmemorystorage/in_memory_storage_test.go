@@ -14,7 +14,9 @@ type fixture struct {
 }
 
 func setUp() fixture {
-	s := InMemoryStorage{}
+	s := InMemoryStorage{
+		events: make(map[uint]storage.Event, 2),
+	}
 	e := storage.Event{
 		Date:        time.Date(2020, time.January, 1, 0, 0, 0, 0, time.UTC),
 		Title:       "testTitle",
@@ -30,36 +32,43 @@ func setUp() fixture {
 
 func TestAddEvent(t *testing.T) {
 	f := setUp()
-	assert.NoError(t, f.s.AddEvent(f.e))
-	assert.Equal(t, f.e, f.s.events[0])
-	assert.NoError(t, f.s.AddEvent(f.e2))
+	idx, err := f.s.AddEvent(f.e)
+	assert.NoError(t, err)
+	assert.Equal(t, f.e, f.s.events[idx])
+	idx, err = f.s.AddEvent(f.e2)
+	assert.NoError(t, err)
 	assert.Equal(t, 2, len(f.s.events))
-	assert.Equal(t, f.e2, f.s.events[1])
+	assert.Equal(t, f.e2, f.s.events[idx])
 }
 
 func TestChangeEvent(t *testing.T) {
 	f := setUp()
-	assert.NoError(t, f.s.AddEvent(f.e))
-	assert.NoError(t, f.s.ChangeEvent(f.e, f.e2))
+	idx, err := f.s.AddEvent(f.e)
+	assert.NoError(t, err)
+	assert.NoError(t, f.s.ChangeEvent(idx, f.e2))
 	assert.Equal(t, 1, len(f.s.events))
-	assert.Equal(t, f.e2, f.s.events[0])
+	assert.Equal(t, f.e2, f.s.events[idx])
 }
 
 func TestDeleteEvent(t *testing.T) {
 	f := setUp()
-	assert.NoError(t, f.s.AddEvent(f.e))
-	assert.NoError(t, f.s.AddEvent(f.e2))
-	assert.NoError(t, f.s.DeleteEvent(f.e2))
+	idx1, err := f.s.AddEvent(f.e)
+	assert.NoError(t, err)
+	idx2, err := f.s.AddEvent(f.e)
+	assert.NoError(t, err)
+	assert.NoError(t, f.s.DeleteEvent(idx2))
 	assert.Equal(t, 1, len(f.s.events))
-	assert.Equal(t, f.e, f.s.events[0])
-	assert.NoError(t, f.s.DeleteEvent(f.e))
+	assert.Equal(t, f.e, f.s.events[idx1])
+	assert.NoError(t, f.s.DeleteEvent(idx1))
 	assert.Equal(t, 0, len(f.s.events))
 }
 
 func TestGetEvents(t *testing.T) {
 	f := setUp()
-	assert.NoError(t, f.s.AddEvent(f.e))
-	assert.NoError(t, f.s.AddEvent(f.e2))
+	idx, err := f.s.AddEvent(f.e)
+	assert.NoError(t, err)
+	_, err = f.s.AddEvent(f.e2)
+	assert.NoError(t, err)
 
 	ev, err := f.s.GetEvents(
 		time.Date(2019, time.January, 2, 0, 0, 0, 0, time.UTC),
@@ -67,7 +76,7 @@ func TestGetEvents(t *testing.T) {
 	)
 
 	assert.NoError(t, err)
-	assert.Equal(t, f.e, ev[0])
+	assert.Equal(t, f.e, ev[idx])
 
 	ev, err = f.s.GetEvents(
 		time.Date(2018, time.January, 1, 0, 0, 0, 0, time.UTC),
