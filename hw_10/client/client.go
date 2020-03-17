@@ -2,81 +2,27 @@ package main
 
 import (
 	"bufio"
-	"context"
-	"errors"
 	"flag"
 	"fmt"
 	"log"
 	"net"
 	"os"
-	"sync"
 	"time"
 )
-
-func readRoutine(ctx context.Context, conn net.Conn, errChan chan<- error, wg *sync.WaitGroup) {
-	defer wg.Done()
-	scanner := bufio.NewScanner(conn)
-
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		default:
-			if !scanner.Scan() {
-				errChan <- errors.New("readerRoutine cannot scan msg")
-				return
-			}
-			text := scanner.Text()
-			log.Printf("From server: %s", text)
-		}
-	}
-}
-
-func writeRoutine(ctx context.Context, cancel context.CancelFunc, conn net.Conn, errChan chan<- error, wg *sync.WaitGroup) {
-	defer wg.Done()
-	scanner := bufio.NewScanner(os.Stdin)
-
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		default:
-			if !scanner.Scan() {
-				if scanner.Err() == nil {
-					cancel()
-					_ = conn.Close()
-					return
-				}
-				errChan <- errors.New("writeRoutine cannot scan msg")
-				return
-			}
-
-			str := scanner.Text()
-
-			if _, err := conn.Write([]byte(fmt.Sprintf("%s\n", str))); err != nil {
-				errChan <- err
-				return
-			}
-		}
-	}
-}
 
 func main() {
 	var timeout time.Duration
 	flag.DurationVar(&timeout, "timeout", 10*time.Second, "time for trying to connect to another client")
-
 	flag.Parse()
-
 	args := flag.Args()
 	if len(args) < 2 {
 		log.Fatalln("usage: go-telnet <addr> <port> [--timeout=10s]")
 	}
 
-	dialer := &net.Dialer{}
-	ctx, _ := context.WithTimeout(context.Background(), timeout)
-
-	addr := args[0] + ":" + args[1]
-	conn, err := dialer.DialContext(ctx, "tcp", addr)
+	dialer := &net.Dialer{
+		Timeout: timeout,
+	}
+	conn, err := dialer.Dial("tcp", args[0] + ":" + args[1])
 	if err != nil {
 		log.Fatalf("Cannot connect: %v", err)
 	}
@@ -86,24 +32,36 @@ func main() {
 		}
 	}()
 
-	ctx, cancel := context.WithCancel(context.Background())
-	errChan := make(chan error)
+	conScanner := bufio.NewScanner(conn)
+	stdinScanner := bufio.NewScanner(os.Stdin)
 
-	wg := &sync.WaitGroup{}
-	wg.Add(2)
-	go readRoutine(ctx, conn, errChan, wg)
-	go writeRoutine(ctx, cancel, conn, errChan, wg)
-
-
-	select {
-	case <-ctx.Done():
-	case e := <-errChan:
-		if e != nil {
-			log.Println(e.Error())
+	for {
+		// read stdio
+		if !stdinScanner.Scan() {
+			if stdinScanner.Err() == nil {
+				log.Println("stdio reads EOF")
+				return
+			}
+			log.Fatalf("stdio scan error: %v", err)
+			return
 		}
-		_ = conn.Close()
-		cancel()
-	}
+		str := stdinScanner.Text()
 
-	wg.Wait()
+		// send request
+		if _, err := conn.Write([]byte(fmt.Sprintf("%s\n", str))); err != nil {
+			log.Printf("server not responding, cannot write : %v", err)
+			return
+		}
+
+		// read response
+		if !conScanner.Scan() {
+			if stdinScanner.Err() == nil {
+				log.Printf("server sent EOF")
+				return
+			}
+			log.Fatalf("connection scan error: %v", err)
+		}
+		text := conScanner.Text()
+		fmt.Println(text)
+	}
 }

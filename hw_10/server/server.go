@@ -1,4 +1,4 @@
-package server
+package main
 
 import (
 	"bufio"
@@ -14,20 +14,13 @@ func handleConnection(conn net.Conn) {
 			log.Printf("Close connection err: %v", err.Error())
 		}
 	}()
-	_, err := conn.Write([]byte(fmt.Sprintf("Welcome to %s, friend from %s\n", conn.LocalAddr(), conn.RemoteAddr())))
-	if err != nil {
-		return
-	}
 
 	scanner := bufio.NewScanner(conn)
 	for scanner.Scan() {
 		text := scanner.Text()
 		log.Printf("RECEIVED: %s", text)
-		if text == "quit" || text == "exit" {
-			break
-		}
 
-		_, err = conn.Write([]byte(fmt.Sprintf("I have received '%s'\n", text)))
+		_, err := conn.Write([]byte(fmt.Sprintf("I have received '%s'\n", text)))
 		if err != nil {
 			break
 		}
