@@ -6,8 +6,8 @@ install:
   - go get golang.org/x/lint/golint
   - go get github.com/stretchr/testify
   - go get github.com/cheggaaa/pb/v3
-  - go get -u go.uber.org/zap
-  - go get -u github.com/valyala/fasthttp
+  - go get go.uber.org/zap
+  - go get github.com/valyala/fasthttp
 
 jobs:
   include:
