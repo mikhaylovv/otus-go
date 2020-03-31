@@ -3,13 +3,11 @@ package main
 import (
 	"flag"
 	"github.com/mikhaylovv/otus-go/hw_8/calendar"
-	"github.com/mikhaylovv/otus-go/hw_8/calendar/storage/inmemorystorage"
 	"github.com/mikhaylovv/otus-go/hw_8/config"
 	"github.com/mikhaylovv/otus-go/hw_8/httpserver"
 	"go.uber.org/zap"
 	"io/ioutil"
 	"log"
-	"time"
 )
 
 func newLogger(level, path string) (*zap.Logger, error) {
