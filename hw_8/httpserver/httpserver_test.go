@@ -38,13 +38,13 @@ func setUpHandleTest(t *testing.T) fixture {
 
 	go func() {
 		if err := s.Serve(ln); err != nil {
-			t.Errorf("unexpected error: %s", err)
+			assert.FailNow(t, "Error serve listener", err)
 		}
 	}()
 
 	c, err := ln.Dial()
 	if err != nil {
-		t.Fatalf("unexpected error: %s", err)
+		assert.FailNow(t, "Error dial", err)
 	}
 
 	return fixture{s, ln, c}
@@ -52,15 +52,16 @@ func setUpHandleTest(t *testing.T) fixture {
 
 func tearDownHandleTest(t *testing.T, f *fixture) {
 	if err := f.Conn.Close(); err != nil {
-		t.Fatalf("unexpected error: %s", err)
+		assert.Fail(t, "Error close connection", err)
 	}
 	if err := f.Listener.Close(); err != nil {
-		t.Fatalf("unexpected error: %s", err)
+		assert.Fail(t, "Error close listener", err)
 	}
 }
 
 func TestHandlerUnsupportedPath(t *testing.T) {
 	f := setUpHandleTest(t)
+	defer tearDownHandleTest(t, &f)
 
 	req := fasthttp.Request{}
 	req.Header.SetMethod("GET")
@@ -68,23 +69,23 @@ func TestHandlerUnsupportedPath(t *testing.T) {
 	req.URI().Update("/test")
 
 	if _, err := f.Conn.Write([]byte(req.String())); err != nil {
-		t.Fatal(err)
+		assert.Fail(t, "Error write in connection", err)
 	}
 
 	br := bufio.NewReader(f.Conn)
 	var resp fasthttp.Response
 	if err := resp.Read(br); err != nil {
-		t.Fatalf("unexpected error: %s", err)
+		assert.Fail(t, "Error read connection", err)
 	}
 
 	assert.Equal(t, fasthttp.StatusNotFound, resp.StatusCode())
 	assert.Equal(t, "Unsupported path", string(resp.Body()))
 
-	tearDownHandleTest(t, &f)
 }
 
 func TestHandlerHello(t *testing.T) {
 	f := setUpHandleTest(t)
+	defer tearDownHandleTest(t, &f)
 
 	req := fasthttp.Request{}
 	req.Header.SetMethod("GET")
@@ -92,17 +93,15 @@ func TestHandlerHello(t *testing.T) {
 	req.URI().Update("/hello")
 
 	if _, err := f.Conn.Write([]byte(req.String())); err != nil {
-		t.Fatal(err)
+		assert.Fail(t, "Error write in connection", err)
 	}
 
 	br := bufio.NewReader(f.Conn)
 	var resp fasthttp.Response
 	if err := resp.Read(br); err != nil {
-		t.Fatalf("unexpected error: %s", err)
+		assert.Fail(t, "Error read connection", err)
 	}
 
 	assert.Equal(t, fasthttp.StatusOK, resp.StatusCode())
 	assert.Equal(t, "hello, stranger", string(resp.Body()))
-
-	tearDownHandleTest(t, &f)
 }

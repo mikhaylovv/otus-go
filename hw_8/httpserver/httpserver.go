@@ -24,6 +24,11 @@ func handle(ctx *fasthttp.RequestCtx, lg *zap.Logger) {
 	}
 }
 
+// NewHTTPServer - constructor
+func NewHTTPServer(lg * zap.Logger) *HTTPServer {
+	return &HTTPServer{Logger:lg}
+}
+
 // StartListen - starts listen http requests in current goroutine
 func (h *HTTPServer) StartListen(addr string) error {
 	return fasthttp.ListenAndServe(
