@@ -46,11 +46,7 @@ func main() {
 		log.Fatal("create logger error", err)
 	}
 
-	c := calendar.Calendar{
-		Storage: &inmemorystorage.InMemoryStorage{},
-		Logger:  lg,
-	}
-	_, _ = c.Storage.GetEvents(time.Now(), time.Now())
+	_ = calendar.NewCalendar(lg)
 
 	srv := httpserver.NewHTTPServer(lg)
 

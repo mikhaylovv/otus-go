@@ -11,8 +11,8 @@ type Event struct {
 
 // Storage - provides interface for any Event storage
 type Storage interface {
-	AddEvent(e Event) error
-	DeleteEvent(e Event) error
-	ChangeEvent(old Event, new Event) error
+	AddEvent(e Event) (uint, error)
+	DeleteEvent(id uint) error
+	ChangeEvent(oldID uint, new Event) error
 	GetEvents(from time.Time, to time.Time) ([]Event, error)
 }
