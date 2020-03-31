@@ -15,7 +15,7 @@ type fixture struct {
 
 func setUp() fixture {
 	s := InMemoryStorage{
-		events: make(map[uint]storage.Event, 2),
+		events: make(map[uint]event, 2),
 	}
 	e := storage.Event{
 		Date:        time.Date(2020, time.January, 1, 0, 0, 0, 0, time.UTC),
@@ -34,11 +34,11 @@ func TestAddEvent(t *testing.T) {
 	f := setUp()
 	idx, err := f.s.AddEvent(f.e)
 	assert.NoError(t, err)
-	assert.Equal(t, f.e, f.s.events[idx])
+	assert.Equal(t, f.e, f.s.events[idx].Event)
 	idx, err = f.s.AddEvent(f.e2)
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(f.s.events))
-	assert.Equal(t, f.e2, f.s.events[idx])
+	assert.Equal(t, f.e2, f.s.events[idx].Event)
 }
 
 func TestChangeEvent(t *testing.T) {
@@ -47,7 +47,7 @@ func TestChangeEvent(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NoError(t, f.s.ChangeEvent(idx, f.e2))
 	assert.Equal(t, 1, len(f.s.events))
-	assert.Equal(t, f.e2, f.s.events[idx])
+	assert.Equal(t, f.e2, f.s.events[idx].Event)
 }
 
 func TestDeleteEvent(t *testing.T) {
@@ -58,7 +58,7 @@ func TestDeleteEvent(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NoError(t, f.s.DeleteEvent(idx2))
 	assert.Equal(t, 1, len(f.s.events))
-	assert.Equal(t, f.e, f.s.events[idx1])
+	assert.Equal(t, f.e, f.s.events[idx1].Event)
 	assert.NoError(t, f.s.DeleteEvent(idx1))
 	assert.Equal(t, 0, len(f.s.events))
 }
