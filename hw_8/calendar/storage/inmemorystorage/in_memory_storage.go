@@ -5,24 +5,16 @@ import (
 	"time"
 )
 
-type event struct {
-	storage.Event
-	id uint
-}
-
 // InMemoryStorage - in memory storage for Calendar Events
 type InMemoryStorage struct {
-	events map[uint]event
+	events map[uint]storage.Event
 	last uint
 }
 
 // AddEvent - add new event in Storage or error ErrEventAlreadyExist
 func (s *InMemoryStorage) AddEvent(e storage.Event) (uint, error) {
 	idx := s.last
-	s.events[idx] = event{
-		Event: e,
-		id:    idx,
-	}
+	s.events[idx] = e
 	s.last++
 	return idx, nil
 }
@@ -33,13 +25,13 @@ func (s *InMemoryStorage) DeleteEvent(id uint) error {
 	return nil
 }
 
-// ChangeEvent - changes existing event
-func (s *InMemoryStorage) ChangeEvent(oldID uint, new storage.Event) error {
-	s.events[oldID] = event{
-		Event: new,
-		id:    oldID,
+// ChangeEvent - changes existing event. If event not found send ErrEventNotFound
+func (s *InMemoryStorage) ChangeEvent(new storage.Event) error {
+	if _, ok := s.events[new.Id]; ok {
+		s.events[new.Id] = new
+		return nil
 	}
-	return nil
+	return storage.ErrEventNotFound
 }
 
 // GetEvents - gets events from date to date, error always nil
@@ -47,7 +39,7 @@ func (s *InMemoryStorage) GetEvents(from time.Time, to time.Time) ([]storage.Eve
 	var res []storage.Event
 	for _, ev := range s.events {
 		if ev.Date.After(from) && ev.Date.Before(to) {
-			res = append(res, ev.Event)
+			res = append(res, ev)
 		}
 	}
 

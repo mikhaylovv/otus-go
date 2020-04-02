@@ -7,7 +7,8 @@ import (
 
 // HTTPServer - simple realization of http server, using fasthttp
 type HTTPServer struct {
-	Logger *zap.Logger
+	logger *zap.Logger
+	addr   string
 }
 
 func handle(ctx *fasthttp.RequestCtx, lg *zap.Logger) {
@@ -25,16 +26,19 @@ func handle(ctx *fasthttp.RequestCtx, lg *zap.Logger) {
 }
 
 // NewHTTPServer - constructor
-func NewHTTPServer(lg * zap.Logger) *HTTPServer {
-	return &HTTPServer{Logger:lg}
+func NewHTTPServer(addr string, lg *zap.Logger) *HTTPServer {
+	return &HTTPServer{
+		logger: lg,
+		addr:   addr,
+	}
 }
 
 // StartListen - starts listen http requests in current goroutine
-func (h *HTTPServer) StartListen(addr string) error {
+func (h *HTTPServer) StartListen() error {
 	return fasthttp.ListenAndServe(
-		addr,
+		h.addr,
 		func(ctx *fasthttp.RequestCtx) {
-			handle(ctx, h.Logger)
+			handle(ctx, h.logger)
 		},
 	)
 }

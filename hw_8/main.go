@@ -3,7 +3,9 @@ package main
 import (
 	"flag"
 	"github.com/mikhaylovv/otus-go/hw_8/calendar"
+	"github.com/mikhaylovv/otus-go/hw_8/calendar/storage/inmemorystorage"
 	"github.com/mikhaylovv/otus-go/hw_8/config"
+	"github.com/mikhaylovv/otus-go/hw_8/grpcserver"
 	"github.com/mikhaylovv/otus-go/hw_8/httpserver"
 	"go.uber.org/zap"
 	"io/ioutil"
@@ -44,12 +46,10 @@ func main() {
 		log.Fatal("create logger error", err)
 	}
 
-	_ = calendar.NewCalendar(lg)
+	s := &inmemorystorage.InMemoryStorage{}
+	hsrv := httpserver.NewHTTPServer(cfg.HTTPListen, lg)
+	gsrv := grpcserver.NewServer(s, cfg.GRPSListen, lg)
+	c := calendar.NewCalendar(s, hsrv, gsrv, lg)
 
-	srv := httpserver.NewHTTPServer(lg)
-
-	err = srv.StartListen(cfg.HTTPLiten)
-	if err != nil {
-		log.Fatal("can't start http server", err)
-	}
+	c.Start()
 }
