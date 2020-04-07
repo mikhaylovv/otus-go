@@ -8,7 +8,8 @@ install:
   - go get github.com/cheggaaa/pb/v3
   - go get go.uber.org/zap
   - go get github.com/valyala/fasthttp
-  - go get github.com/golang/protobuf
+  - go get github.com/golang/protobuf/proto
+  - go get github.com/golang/protobuf/ptypes
   - go get google.golang.org/grpc
 
 
