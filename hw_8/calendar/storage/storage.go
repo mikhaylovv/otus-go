@@ -4,7 +4,7 @@ import "time"
 
 // Event -  structure of  Calendar simple event
 type Event struct {
-	Id          uint
+	ID          uint
 	Date        time.Time
 	Title       string
 	Description string

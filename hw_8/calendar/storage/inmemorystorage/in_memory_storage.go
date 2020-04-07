@@ -27,8 +27,8 @@ func (s *InMemoryStorage) DeleteEvent(id uint) error {
 
 // ChangeEvent - changes existing event. If event not found send ErrEventNotFound
 func (s *InMemoryStorage) ChangeEvent(new storage.Event) error {
-	if _, ok := s.events[new.Id]; ok {
-		s.events[new.Id] = new
+	if _, ok := s.events[new.ID]; ok {
+		s.events[new.ID] = new
 		return nil
 	}
 	return storage.ErrEventNotFound

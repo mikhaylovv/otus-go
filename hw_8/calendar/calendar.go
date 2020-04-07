@@ -6,6 +6,7 @@ import (
 	"github.com/mikhaylovv/otus-go/hw_8/httpserver"
 	"go.uber.org/zap"
 	"log"
+	"sync"
 )
 
 // Calendar - base structure for Calendar micro service
@@ -26,15 +27,19 @@ func NewCalendar(s storage.Storage, hs *httpserver.HTTPServer, gs *grpcserver.Se
 	}
 }
 
+// Start - starts Calendar servers, locking function
 func (c *Calendar) Start() {
+	wg  := sync.WaitGroup{}
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		if err := c.hserver.StartListen(); err != nil {
 			log.Fatal("can't start http server", err)
 		}
-
 	}()
 
 	if err := c.gserver.StartListen(); err != nil {
 		log.Fatal("can't start grpcs server", err)
 	}
+	wg.Wait()
 }

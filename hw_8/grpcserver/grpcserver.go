@@ -16,12 +16,14 @@ import (
 	"time"
 )
 
+// Server - GRPC server object
 type Server struct {
 	storage storage.Storage
 	addr    string
 	lg      *zap.Logger
 }
 
+// NewServer - constructor for Server
 func NewServer(s storage.Storage, addr string, l *zap.Logger) *Server {
 	return &Server{
 		storage: s,
@@ -30,6 +32,7 @@ func NewServer(s storage.Storage, addr string, l *zap.Logger) *Server {
 	}
 }
 
+// AddEvent - GRPC call for adding event in Storage
 func (s *Server) AddEvent(_ context.Context, ev *calendarpb.CalendarEvent) (*calendarpb.CalendarEventId, error) {
 	id, err := s.storage.AddEvent(storage.Event{
 		Date:        time.Unix(ev.Date.Seconds, int64(ev.Date.Nanos)),
@@ -48,14 +51,16 @@ func (s *Server) AddEvent(_ context.Context, ev *calendarpb.CalendarEvent) (*cal
 	return ret, nil
 }
 
-func (s *Server) DeleteEvent(_ context.Context, evId *calendarpb.CalendarEventId) (*empty.Empty, error) {
-	err := s.storage.DeleteEvent(uint(evId.Id))
+// DeleteEvent - GRPC call for deleting event
+func (s *Server) DeleteEvent(_ context.Context, evID *calendarpb.CalendarEventId) (*empty.Empty, error) {
+	err := s.storage.DeleteEvent(uint(evID.Id))
 	return nil, processError(err)
 }
 
+// ChangeEvent - GRPC call for changing event
 func (s *Server) ChangeEvent(_ context.Context, ev *calendarpb.CalendarEvent) (*empty.Empty, error) {
 	e := storage.Event{
-		Id:          uint(ev.Id),
+		ID:          uint(ev.Id),
 		Date:        time.Unix(ev.Date.Seconds, int64(ev.Date.Nanos)),
 		Title:       ev.Title,
 		Description: ev.Description,
@@ -65,6 +70,7 @@ func (s *Server) ChangeEvent(_ context.Context, ev *calendarpb.CalendarEvent) (*
 	return nil, processError(err)
 }
 
+// GetEvents - GRPS call for getting events
 func (s *Server) GetEvents(_ context.Context, di *calendarpb.DateInterval) (*calendarpb.CalendarEvents, error) {
 	from, err := ptypes.Timestamp(di.GetFrom())
 	if err != nil {
@@ -87,7 +93,7 @@ func (s *Server) GetEvents(_ context.Context, di *calendarpb.DateInterval) (*cal
 
 	for _, ev := range evs {
 		ret.Events = append(ret.Events, &calendarpb.CalendarEvent{
-			Id: uint32(ev.Id),
+			Id: uint32(ev.ID),
 			Date: &timestamp.Timestamp{
 				Seconds: ev.Date.Unix(),
 				Nanos:   int32(ev.Date.UnixNano()),
@@ -100,6 +106,7 @@ func (s *Server) GetEvents(_ context.Context, di *calendarpb.DateInterval) (*cal
 	return ret, nil
 }
 
+// StartListen - starts listen GRPS messages on addres from Server object
 func (s *Server) StartListen() error {
 	lis, err := net.Listen("tcp", s.addr)
 	if err != nil {
