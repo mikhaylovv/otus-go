@@ -1,5 +1,6 @@
 {
-  "http_listen": "localhost:8799",
+  "http_listen": "0.0.0.0:8799",
+  "grps_listen": "0.0.0.0:50051",
   "log_file": "/tmp/calendar_log.txt",
   "log_level": "DEBUG"
 }

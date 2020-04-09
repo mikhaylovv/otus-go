@@ -1,9 +1,11 @@
 syntax = "proto3";
 
-import "google/protobuf/timestamp.proto";
-import "google/protobuf/empty.proto";
+package calendar;
 
 option go_package = "calendarpb";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 service Calendar {
     rpc AddEvent (CalendarEvent) returns (CalendarEventId);

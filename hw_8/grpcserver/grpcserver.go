@@ -54,7 +54,7 @@ func (s *Server) AddEvent(_ context.Context, ev *calendarpb.CalendarEvent) (*cal
 // DeleteEvent - GRPC call for deleting event
 func (s *Server) DeleteEvent(_ context.Context, evID *calendarpb.CalendarEventId) (*empty.Empty, error) {
 	err := s.storage.DeleteEvent(uint(evID.Id))
-	return nil, processError(err)
+	return &empty.Empty{}, processError(err)
 }
 
 // ChangeEvent - GRPC call for changing event
@@ -67,7 +67,7 @@ func (s *Server) ChangeEvent(_ context.Context, ev *calendarpb.CalendarEvent) (*
 	}
 
 	err := s.storage.ChangeEvent(e)
-	return nil, processError(err)
+	return &empty.Empty{}, processError(err)
 }
 
 // GetEvents - GRPS call for getting events
@@ -88,7 +88,7 @@ func (s *Server) GetEvents(_ context.Context, di *calendarpb.DateInterval) (*cal
 	}
 
 	ret := &calendarpb.CalendarEvents{
-		Events: make([]*calendarpb.CalendarEvent, len(evs)),
+		Events: make([]*calendarpb.CalendarEvent, 0, len(evs)),
 	}
 
 	for _, ev := range evs {

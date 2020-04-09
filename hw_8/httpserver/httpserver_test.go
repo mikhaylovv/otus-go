@@ -10,7 +10,6 @@ import (
 	"testing"
 )
 
-
 type testLogger struct {
 	t *testing.T
 }

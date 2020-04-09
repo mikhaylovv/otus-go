@@ -46,7 +46,7 @@ func main() {
 		log.Fatal("create logger error", err)
 	}
 
-	s := &inmemorystorage.InMemoryStorage{}
+	s := inmemorystorage.NewInMemoryStorage()
 	hsrv := httpserver.NewHTTPServer(cfg.HTTPListen, lg)
 	gsrv := grpcserver.NewServer(s, cfg.GRPSListen, lg)
 	c := calendar.NewCalendar(s, hsrv, gsrv, lg)

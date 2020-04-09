@@ -8,12 +8,21 @@ import (
 // InMemoryStorage - in memory storage for Calendar Events
 type InMemoryStorage struct {
 	events map[uint]storage.Event
-	last uint
+	last   uint
+}
+
+// NewInMemoryStorage - construct NewInMemoryStorage object
+func NewInMemoryStorage() *InMemoryStorage {
+	return &InMemoryStorage{
+		events: make(map[uint]storage.Event),
+		last:   1,
+	}
 }
 
 // AddEvent - add new event in Storage or error ErrEventAlreadyExist
 func (s *InMemoryStorage) AddEvent(e storage.Event) (uint, error) {
 	idx := s.last
+	e.ID = idx
 	s.events[idx] = e
 	s.last++
 	return idx, nil
