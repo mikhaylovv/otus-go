@@ -22,6 +22,8 @@ jobs:
         env: DIR=hw_7
       - name: "hw_8"
         env: DIR=hw_8
+      - name: "hw_10"
+        env: DIR=hw_10
 
 script:
   - cd $DIR
