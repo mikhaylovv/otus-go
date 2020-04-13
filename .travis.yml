@@ -1,10 +1,6 @@
 language: go
 go: 1.12.x
 
-install:
-  - go mod download
-
-
 jobs:
   include:
       - name: "hw_1"
@@ -25,8 +21,9 @@ jobs:
         env: DIR=hw_8
 
 script:
-  - go build $DIR/*.go
-  - go vet ./$DIR/...
-  - golint -set_exit_status $DIR/...
   - cd $DIR
+  - go mod download
+  - go build ./...
+  - go vet ./...
+  - golint -set_exit_status ./...
   - go test ./...
