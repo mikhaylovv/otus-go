@@ -1,6 +1,9 @@
 language: go
 go: 1.12.x
 
+install:
+  - go get golang.org/x/lint/golint
+
 jobs:
   include:
       - name: "hw_1"
