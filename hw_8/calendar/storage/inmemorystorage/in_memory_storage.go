@@ -21,7 +21,7 @@ func NewInMemoryStorage() *InMemoryStorage {
 	}
 }
 
-// AddEvent - add new event in Storage or error ErrEventAlreadyExist
+// AddEvent - add new event in Storage
 func (s *InMemoryStorage) AddEvent(e storage.Event) (uint, error) {
 	idx := s.last
 	s.mutex.Lock()

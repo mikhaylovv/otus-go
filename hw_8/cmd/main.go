@@ -2,8 +2,10 @@ package main
 
 import (
 	"flag"
+	_ "github.com/jackc/pgx/stdlib"
+	"github.com/jmoiron/sqlx"
 	"github.com/mikhaylovv/otus-go/hw_8/calendar"
-	"github.com/mikhaylovv/otus-go/hw_8/calendar/storage/inmemorystorage"
+	"github.com/mikhaylovv/otus-go/hw_8/calendar/storage/dbstorage"
 	"github.com/mikhaylovv/otus-go/hw_8/config"
 	"github.com/mikhaylovv/otus-go/hw_8/grpcserver"
 	"github.com/mikhaylovv/otus-go/hw_8/httpserver"
@@ -46,10 +48,22 @@ func main() {
 		log.Fatal("create logger error", err)
 	}
 
-	s := inmemorystorage.NewInMemoryStorage()
 	hsrv := httpserver.NewHTTPServer(cfg.HTTPListen, lg)
-	gsrv := grpcserver.NewServer(s, cfg.GRPSListen, lg)
-	c := calendar.NewCalendar(s, hsrv, gsrv, lg)
+
+	db, err := sqlx.Connect("pgx", cfg.PostgresDsn)
+	if err != nil {
+		lg.Fatal("connect db error", zap.Error(err))
+	}
+	defer func() {
+		err := db.Close()
+		if err != nil {
+			lg.Fatal("close db error", zap.Error(err))
+		}
+	}()
+
+	ss := dbstorage.NewSQLXStorage(db, lg)
+	gsrv := grpcserver.NewServer(ss, cfg.GRPSListen, lg)
+	c := calendar.NewCalendar(ss, hsrv, gsrv, lg)
 
 	c.Start()
 }

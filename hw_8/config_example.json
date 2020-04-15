@@ -1,6 +1,7 @@
 {
   "http_listen": "0.0.0.0:8799",
   "grps_listen": "0.0.0.0:50051",
+  "postgres_dsn": "dbname=calendar port=54320 user=postgres",
   "log_file": "/tmp/calendar_log.txt",
   "log_level": "DEBUG"
 }
