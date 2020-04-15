@@ -41,6 +41,7 @@ func (s *Server) AddEvent(_ context.Context, ev *calendarpb.CalendarEvent) (*cal
 	})
 
 	if err != nil {
+		s.lg.Error("AddEvent error", zap.Error(err))
 		return nil, processError(err)
 	}
 

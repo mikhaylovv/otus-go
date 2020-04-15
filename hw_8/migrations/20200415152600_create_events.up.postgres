@@ -1,0 +1,6 @@
+create table if not exists events (
+ id serial primary key    not null  check (id > 0),
+ date           timestamp not null,
+ title          text      not null,
+ description    text
+);
