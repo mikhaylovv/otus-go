@@ -8,15 +8,13 @@ import (
 )
 
 type fixture struct {
-	s  InMemoryStorage
+	s  *InMemoryStorage
 	e  storage.Event
 	e2 storage.Event
 }
 
 func setUp() fixture {
-	s := InMemoryStorage{
-		events: make(map[uint]event, 2),
-	}
+	s := NewInMemoryStorage()
 	e := storage.Event{
 		Date:        time.Date(2020, time.January, 1, 0, 0, 0, 0, time.UTC),
 		Title:       "testTitle",
@@ -33,32 +31,37 @@ func setUp() fixture {
 func TestAddEvent(t *testing.T) {
 	f := setUp()
 	idx, err := f.s.AddEvent(f.e)
+	f.e.ID = idx
 	assert.NoError(t, err)
-	assert.Equal(t, f.e, f.s.events[idx].Event)
+	assert.Equal(t, f.e, f.s.events[idx])
 	idx, err = f.s.AddEvent(f.e2)
+	f.e2.ID = idx
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(f.s.events))
-	assert.Equal(t, f.e2, f.s.events[idx].Event)
+	assert.Equal(t, f.e2, f.s.events[idx])
 }
 
 func TestChangeEvent(t *testing.T) {
 	f := setUp()
 	idx, err := f.s.AddEvent(f.e)
 	assert.NoError(t, err)
-	assert.NoError(t, f.s.ChangeEvent(idx, f.e2))
+	f.e2.ID = idx
+	assert.NoError(t, f.s.ChangeEvent(f.e2))
 	assert.Equal(t, 1, len(f.s.events))
-	assert.Equal(t, f.e2, f.s.events[idx].Event)
+	assert.Equal(t, f.e2, f.s.events[idx])
 }
 
 func TestDeleteEvent(t *testing.T) {
 	f := setUp()
 	idx1, err := f.s.AddEvent(f.e)
+	f.e.ID = idx1
 	assert.NoError(t, err)
-	idx2, err := f.s.AddEvent(f.e)
+	idx2, err := f.s.AddEvent(f.e2)
+	f.e2.ID = idx2
 	assert.NoError(t, err)
 	assert.NoError(t, f.s.DeleteEvent(idx2))
 	assert.Equal(t, 1, len(f.s.events))
-	assert.Equal(t, f.e, f.s.events[idx1].Event)
+	assert.Equal(t, f.e, f.s.events[idx1])
 	assert.NoError(t, f.s.DeleteEvent(idx1))
 	assert.Equal(t, 0, len(f.s.events))
 }
@@ -66,6 +69,7 @@ func TestDeleteEvent(t *testing.T) {
 func TestGetEvents(t *testing.T) {
 	f := setUp()
 	idx, err := f.s.AddEvent(f.e)
+	f.e.ID = idx
 	assert.NoError(t, err)
 	_, err = f.s.AddEvent(f.e2)
 	assert.NoError(t, err)
@@ -76,7 +80,7 @@ func TestGetEvents(t *testing.T) {
 	)
 
 	assert.NoError(t, err)
-	assert.Equal(t, f.e, ev[idx])
+	assert.Equal(t, f.e, ev[0])
 
 	ev, err = f.s.GetEvents(
 		time.Date(2018, time.January, 1, 0, 0, 0, 0, time.UTC),

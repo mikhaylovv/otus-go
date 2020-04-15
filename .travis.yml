@@ -2,12 +2,7 @@ language: go
 go: 1.12.x
 
 install:
-  - go get github.com/beevik/ntp
   - go get golang.org/x/lint/golint
-  - go get github.com/stretchr/testify
-  - go get github.com/cheggaaa/pb/v3
-  - go get go.uber.org/zap
-  - go get github.com/valyala/fasthttp
 
 jobs:
   include:
@@ -31,8 +26,8 @@ jobs:
         env: DIR=hw_10
 
 script:
-  - go build $DIR/*.go
-  - go vet ./$DIR/...
-  - golint -set_exit_status $DIR/...
   - cd $DIR
-  - go test ./...
+  - env GO111MODULE=on go build ./...
+  - env GO111MODULE=on go vet ./...
+  - golint -set_exit_status ./...
+  - env GO111MODULE=on go test ./...
